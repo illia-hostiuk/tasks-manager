@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks Manager</title>
+
+    <style>
+        body { font-family: Arial; padding: 20px; }
+
+        .topbar {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 { text-align: center; }
+
+        .task {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .active { background: #4CAF50; color: white; }
+        .past { background: #d4f7d4; }
+        .future { background: white; border: 1px solid #ccc; }
+
+        .date-header {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .edit-header {
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .edit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-desc {
+            width: 100%;
+            height: 120px;
+            margin-top: 15px;
+            padding: 10px;
+            resize: vertical;
+        }
+        
+        .auth-buttons button:hover {
+  	    transform: scale(1.05);
+ 	    transition: 0.2s;
+	}
+
+        input, select {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+        }
+	body {
+	    margin: 0;
+	    font-family: Arial, sans-serif;
+	}
+
+	/* ФОН */
+	.auth-wrapper {
+   	    position: fixed;
+
+   	    top: 0;
+   	    left: 0;
+   	    width: 100vw;
+   	    height: 100vh;
+
+   	    display: flex;
+    	    justify-content: center;
+   	    align-items: center;
+
+   	    background: linear-gradient(135deg, #4CAF50, #66bb6a);
+
+   	    z-index: 1000;
+}
+
+	/* КАРТОЧКА */
+	.auth-card {
+	    background: white;
+	    padding: 30px;
+	    border-radius: 12px;
+	    width: 300px;
+
+	    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+
+	    display: flex;
+	    flex-direction: column;
+	    animation: fadeIn 0.4s ease;
+	}
+
+	/* ТЕКСТ */
+	.app-title {
+	    text-align: center;
+	    margin-bottom: 5px;
+	}
+
+	.subtitle {
+	    text-align: center;
+	    font-size: 14px;
+	    color: #777;
+	    margin-bottom: 20px;
+	}
+
+	/* INPUT */
+	.auth-card input {
+	    margin-bottom: 10px;
+	    padding: 10px;
+	    border: 1px solid #ccc;
+	    border-radius: 6px;
+	}
+
+	/* BUTTONS */
+	.auth-buttons {
+	    display: flex;
+	    justify-content: space-between;
+	}
+
+	.auth-buttons button {
+	    flex: 1;
+	    margin: 5px;
+	    padding: 10px;
+
+	    border: none;
+	    border-radius: 6px;
+	    cursor: pointer;
+
+	    background: #4CAF50;
+	    color: white;
+	}
+
+	.auth-buttons .secondary {
+	    background: #eee;
+	    color: black;
+	}
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div>
+        <button id="backBtn" onclick="back()" style="display:none;">Back</button>
+    </div>
+
+    <h1>Tasks Manager</h1>
+
+    <div>
+        <span id="userEmail"></span>
+        <button onclick="logout()">Log out</button>
+    </div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen" class="auth-wrapper">
+
+    <div class="auth-card">
+        <h1 class="app-title">Tasks Manager</h1>
+        <p class="subtitle">Plan your time like a pro</p>
+
+        <input id="email" placeholder="Email" autofocus>
+        <input id="password" type="password" placeholder="Password">
+
+        <div class="auth-buttons">
+            <button onclick="login()">Login</button>
+            <button onclick="register()" class="secondary">Register</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TASK LIST -->
+<div id="tasks-screen" style="display:none;">
+    <button onclick="showAdd()">Add</button>
+    <button onclick="showCalendar()">Calendar</button>
+
+    <div id="tasks"></div>
+</div>
+
+<!-- ADD -->
+<div id="add-screen" style="display:none;">
+    <h3>Add Task</h3>
+
+    <input id="taskTitle" placeholder="Title">
+    <input id="taskDesc" placeholder="Description">
+    <input id="taskDate" type="date">
+
+    <div>
+        Start:
+        <select id="startHour"></select> :
+        <select id="startMinute"></select>
+    </div>
+
+    <div>
+        End:
+        <select id="endHour"></select> :
+        <select id="endMinute"></select>
+    </div>
+
+    <button onclick="createTask()">Save</button>
+</div>
+
+<!-- EDIT -->
+<div id="task-screen" style="display:none;">
+
+    <div class="edit-header">Edit Task</div>
+
+    <div class="edit-row">
+
+        <input id="editTitle" placeholder="Title">
+
+        <input id="editDate" type="date">
+
+        <span>Start:</span>
+        <select id="editStartHour"></select> :
+        <select id="editStartMinute"></select>
+
+        <span>End:</span>
+        <select id="editEndHour"></select> :
+        <select id="editEndMinute"></select>
+
+        <button onclick="saveTask()">Save</button>
+        <button onclick="deleteTask()">Delete</button>
+
+    </div>
+
+    <textarea id="editDesc" class="edit-desc" placeholder="Description"></textarea>
+
+</div>
+
+<!-- CALENDAR -->
+<div id="calendar-screen" style="display:none;">
+    <div id="calendar" style="height:720px;"></div>
+</div>
+
+<script>
+
+let token = "";
+let tasks = [];
+let selectedTask = null;
+
+// -------- TIME --------
+
+function fillTimeSelectors() {
+    const hours = [...Array(24).keys()];
+    const minutes = [...Array(60).keys()];
+
+    function fill(id, arr) {
+        const el = document.getElementById(id);
+        el.innerHTML = "";
+        arr.forEach(v => {
+            const val = String(v).padStart(2,'0');
+            el.innerHTML += `<option value="${val}">${val}</option>`;
+        });
+    }
+
+    ["startHour","endHour","editStartHour","editEndHour"].forEach(i=>fill(i,hours));
+    ["startMinute","endMinute","editStartMinute","editEndMinute"].forEach(i=>fill(i,minutes));
+}
+
+// -------- AUTH --------
+
+async function register() {
+    const emailVal = document.getElementById("email").value;
+    const passwordVal = document.getElementById("password").value;
+
+    const res = await fetch("/register", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({email:emailVal,password:passwordVal})
+    });
+
+    const data = await res.json();
+    if(!res.ok) return alert(data.detail);
+
+    alert("Registered");
+}
+
+async function login() {
+    const emailVal = document.getElementById("email").value;
+    const passwordVal = document.getElementById("password").value;
+
+    const form = new URLSearchParams();
+    form.append("username", emailVal);
+    form.append("password", passwordVal);
+
+    const res = await fetch("/login",{method:"POST",body:form});
+    const data = await res.json();
+
+    if(!res.ok) return alert("Invalid login");
+
+    token = data.access_token;
+
+    document.getElementById("auth-screen").style.display = "none";
+
+    document.querySelector(".topbar").style.display = "flex";
+    document.getElementById("userEmail").innerText = emailVal;
+
+    showTasks();
+}
+
+function logout(){
+    token = "";
+
+    document.getElementById("auth-screen").style.display = "flex";
+    document.querySelector(".topbar").style.display = "none";
+
+    document.getElementById("tasks-screen").style.display = "none";
+}
+
+// -------- UI --------
+
+function showBack(v){
+    document.getElementById("backBtn").style.display = v ? "inline" : "none";
+}
+
+function showScreen(id){
+    ["tasks-screen","add-screen","task-screen","calendar-screen"].forEach(s=>{
+        document.getElementById(s).style.display="none";
+    });
+    document.getElementById(id).style.display="block";
+}
+
+function showTasks(){
+    document.getElementById("auth-screen").style.display = "none";
+
+    document.querySelector(".topbar").style.display = "flex"; // ПОКАЗЫВАЕМ
+
+    showBack(false);
+    showScreen("tasks-screen");
+    fillTimeSelectors();
+    loadTasks();
+}
+
+function showAdd(){
+    showBack(true);
+    showScreen("add-screen");
+}
+
+function back(){ showTasks(); }
+
+function showAuth(){
+    document.getElementById("auth-screen").style.display = "flex";
+
+    document.querySelector(".topbar").style.display = "none"; // СКРЫВАЕМ
+}
+
+// -------- TASKS --------
+
+function getTaskStatus(t){
+    const now=new Date();
+    const s=new Date(t.date+"T"+t.start_time);
+    const e=new Date(t.date+"T"+t.end_time);
+
+    if(now>=s && now<=e) return "active";
+    if(now>e) return "past";
+    return "future";
+}
+
+function formatDate(d){
+    const [y,m,day]=d.split("-");
+    return `${day}-${m}-${y}`;
+}
+
+async function loadTasks(){
+    const res=await fetch("/tasks",{headers:{Authorization:"Bearer "+token}});
+    tasks=await res.json();
+
+    tasks.sort((a,b)=>new Date(a.date+"T"+a.start_time)-new Date(b.date+"T"+b.start_time));
+
+    let currentDate="";
+    const container=document.getElementById("tasks");
+    container.innerHTML="";
+
+    tasks.forEach(t=>{
+        if(t.date!==currentDate){
+            currentDate=t.date;
+            container.innerHTML += `<div class="date-header">${formatDate(t.date)}</div>`;
+        }
+
+        const cls = getTaskStatus(t);
+        container.innerHTML += `<div class="task ${cls}" ondblclick='openTask(${JSON.stringify(t)})'>
+            ${t.start_time} — ${t.title}
+        </div>`;
+    });
+}
+
+// -------- CRUD --------
+
+function openTask(t){
+    selectedTask=t;
+    showBack(true);
+    showScreen("task-screen");
+
+    document.getElementById("editTitle").value=t.title;
+    document.getElementById("editDesc").value=t.description;
+    document.getElementById("editDate").value=t.date;
+
+    const [sh,sm]=t.start_time.split(":");
+    const [eh,em]=t.end_time.split(":");
+
+    document.getElementById("editStartHour").value=sh;
+    document.getElementById("editStartMinute").value=sm;
+    document.getElementById("editEndHour").value=eh;
+    document.getElementById("editEndMinute").value=em;
+}
+
+async function createTask(){
+    const start = startHour.value + ":" + startMinute.value;
+    const end = endHour.value + ":" + endMinute.value;
+
+    await fetch("/tasks",{
+        method:"POST",
+        headers:{
+            Authorization:"Bearer "+token,
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            title:taskTitle.value,
+            description:taskDesc.value,
+            date:taskDate.value,
+            start_time:start,
+            end_time:end
+        })
+    });
+
+    back();
+}
+
+async function saveTask(){
+    const start = editStartHour.value + ":" + editStartMinute.value;
+    const end = editEndHour.value + ":" + editEndMinute.value;
+
+    await fetch(`/tasks/${selectedTask.id}`,{
+        method:"PUT",
+        headers:{
+            Authorization:"Bearer "+token,
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            title:editTitle.value,
+            description:editDesc.value,
+            date:editDate.value,
+            start_time:start,
+            end_time:end
+        })
+    });
+
+    back();
+}
+
+async function deleteTask(){
+    await fetch(`/tasks/${selectedTask.id}`,{
+        method:"DELETE",
+        headers:{Authorization:"Bearer "+token}
+    });
+    back();
+}
+
+// -------- CALENDAR --------
+
+function showCalendar(){
+    showBack(true);
+    showScreen("calendar-screen");
+    renderCalendar();
+}
+
+function timeToMinutes(t){
+    const [h,m]=t.split(":").map(Number);
+    return h*60+m;
+}
+
+function renderCalendar() {
+    const container = document.getElementById("calendar");
+    container.innerHTML = "";
+
+    const grouped = {};
+    tasks.forEach(t => {
+        if (!grouped[t.date]) grouped[t.date] = [];
+        grouped[t.date].push(t);
+    });
+
+    const dates = Object.keys(grouped);
+
+    // ---- layout ----
+    container.style.display = "flex";
+    container.style.height = "720px";
+    container.style.border = "1px solid #ccc";
+    container.style.overflow = "auto";
+
+    // ---- TIME COLUMN ----
+    const timeCol = document.createElement("div");
+    timeCol.style.width = "60px";
+
+    for (let i = 0; i < 24; i++) {
+        const t = document.createElement("div");
+        t.style.height = "60px";
+        t.style.fontSize = "12px";
+        t.style.color = "#666";
+        t.innerText = String(i).padStart(2,'0') + ":00";
+        timeCol.appendChild(t);
+    }
+
+    container.appendChild(timeCol);
+
+    // ---- DAY COLUMNS ----
+    dates.forEach(date => {
+
+        const col = document.createElement("div");
+        col.style.flex = "1";
+        col.style.minWidth = "160px";
+        col.style.borderLeft = "1px solid #ddd";
+        col.style.position = "relative";
+
+        // header
+        const header = document.createElement("div");
+        header.innerText = formatDate(date);
+        header.style.textAlign = "center";
+        header.style.fontWeight = "bold";
+        header.style.height = "20px";
+        col.appendChild(header);
+
+        // background grid
+        for (let i = 0; i < 24; i++) {
+            const line = document.createElement("div");
+            line.style.height = "60px";
+            line.style.borderTop = "1px solid #eee";
+            col.appendChild(line);
+        }
+
+        // tasks
+        grouped[date].forEach(t => {
+
+            const start = timeToMinutes(t.start_time);
+            const end = timeToMinutes(t.end_time);
+
+            const block = document.createElement("div");
+
+            block.style.position = "absolute";
+            block.style.left = "5px";
+            block.style.right = "5px";
+
+            block.style.top = (start) + "px";
+            block.style.height = (end - start) + "px";
+
+            block.style.background = "#4CAF50";
+            block.style.color = "white";
+            block.style.borderRadius = "6px";
+            block.style.padding = "4px";
+            block.style.fontSize = "12px";
+
+            block.innerText = t.title;
+
+            col.appendChild(block);
+        });
+
+        container.appendChild(col);
+    });
+}
+
+</script>
+
+</body>
+</html>
