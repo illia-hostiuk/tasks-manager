@@ -1,385 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tasks Manager</title>
+<meta charset="UTF-8">
+<title>Tasks Manager</title>
 
-    <style>
-        body { font-family: Arial; padding: 20px; }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
-        .topbar {
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 { text-align: center; }
-
-        .task {
-            padding: 8px;
-            margin: 4px 0;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .active { background: #4CAF50; color: white; }
-        .past { background: #d4f7d4; }
-        .future { background: white; border: 1px solid #ccc; }
-
-        .date-header {
-            font-weight: bold;
-            margin-top: 15px;
-        }
-
-        .edit-header {
-            font-size: 24px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        .edit-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .edit-desc {
-            width: 100%;
-            height: 120px;
-            margin-top: 15px;
-            padding: 10px;
-            resize: vertical;
-        }
-        
-        .auth-buttons button:hover {
-  	    transform: scale(1.05);
- 	    transition: 0.2s;
-	}
-
-        input, select {
-            margin: 5px;
-            padding: 5px;
-        }
-
-        button {
-            margin: 5px;
-            padding: 5px 10px;
-        }
-	body {
-	    margin: 0;
-	    font-family: Arial, sans-serif;
-	}
-
-	/* ФОН */
-	.auth-wrapper {
-   	    position: fixed;
-
-   	    top: 0;
-   	    left: 0;
-   	    width: 100vw;
-   	    height: 100vh;
-
-   	    display: flex;
-    	    justify-content: center;
-   	    align-items: center;
-
-   	    background: linear-gradient(135deg, #4CAF50, #66bb6a);
-
-   	    z-index: 1000;
-}
-
-	/* КАРТОЧКА */
-	.auth-card {
-	    background: white;
-	    padding: 30px;
-	    border-radius: 12px;
-	    width: 300px;
-
-	    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-
-	    display: flex;
-	    flex-direction: column;
-	    animation: fadeIn 0.4s ease;
-	}
-
-	/* ТЕКСТ */
-	.app-title {
-	    text-align: center;
-	    margin-bottom: 5px;
-	}
-
-	.subtitle {
-	    text-align: center;
-	    font-size: 14px;
-	    color: #777;
-	    margin-bottom: 20px;
-	}
-
-	/* INPUT */
-	.auth-card input {
-	    margin-bottom: 10px;
-	    padding: 10px;
-	    border: 1px solid #ccc;
-	    border-radius: 6px;
-	}
-
-	/* BUTTONS */
-	.auth-buttons {
-	    display: flex;
-	    justify-content: space-between;
-	}
-
-	.auth-buttons button {
-	    flex: 1;
-	    margin: 5px;
-	    padding: 10px;
-
-	    border: none;
-	    border-radius: 6px;
-	    cursor: pointer;
-
-	    background: #4CAF50;
-	    color: white;
-	}
-
-	.auth-buttons .secondary {
-	    background: #eee;
-	    color: black;
-	}
-	/* фон */
-	body {
-	    font-family: Arial, sans-serif;
-	    background: linear-gradient(135deg, #4CAF50, #81C784);
-	    margin: 0;
-	}
-
-	/* основной контейнер */
-	#tasks-screen {
-	    max-width: 800px;
-	    margin: 40px auto;
-	    background: white;
-	    padding: 25px;
-	    border-radius: 16px;
-	    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-	}
-
-	/* заголовок */
-	h1 {
-	    text-align: center;
-	    margin-bottom: 25px;
-	}
-
-	/* кнопки */
-	button {
-	    border: none;
-	    border-radius: 8px;
-	    padding: 8px 14px;
-	    cursor: pointer;
-	}
-
-	/* Add — главная */
-	button:first-of-type {
-	    background: #4CAF50;
-	    color: white;
-	    font-weight: bold;
-	}
-
-	/* остальные */
-	button:nth-of-type(2),
-	button:nth-of-type(3) {
-	    background: #eee;
-	}
-
-	/* блок кнопок */
-	#tasks-screen > button {
-	    margin-right: 8px;
-	}
-
-        #tasks-screen {
-   	    overflow: hidden;
-	}
-
-	/* даты */
-	.date-header {
-	    margin-top: 20px;
-	    font-weight: bold;
-	    color: #555;
-	}
-
-	/* карточка задачи */
-	.task {
-	    background: #fff;
-	    border-radius: 10px;
-	    padding: 12px;
-	    margin: 6px 0;
-	    border: 1px solid #ddd;
-	    transition: 0.2s;
-	}
-
-	.task:hover {
-	    transform: scale(1.01);
-	}
-
-	/* активные */
-	.active {
-	    background: #4CAF50;
-	    color: white;
-	}
-
-	/* прошедшие */
-	.past {
-	    background: #e8f5e9;
-	}
-    </style>
 </head>
-<body>
 
-<div class="topbar">
-    <div>
-        <button id="backBtn" onclick="back()" style="display:none;">Back</button>
+<body class="bg-green-50 text-gray-800">
+
+<!-- TOPBAR -->
+<div id="topbar" class="hidden bg-green-600 text-white px-6 py-4 flex justify-between items-center shadow">
+
+    <div class="flex items-center gap-3">
+        <button id="backBtn" onclick="back()" class="hidden bg-green-500 px-3 py-1 rounded hover:bg-green-400">
+            ← Back
+        </button>
+        <h1 class="font-bold text-xl">Tasks Manager</h1>
     </div>
 
-    <h1>Tasks Manager</h1>
-
-    <div>
-        <span id="userEmail"></span>
-        <button onclick="logout()">Log out</button>
+    <div class="flex items-center gap-4">
+        <span id="userEmail" class="text-sm"></span>
+        <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600">Logout</button>
     </div>
 </div>
 
 <!-- AUTH -->
-<div id="auth-screen" class="auth-wrapper">
+<div id="auth-screen" class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-green-500 to-emerald-400">
 
-    <div class="auth-card">
-        <h1 class="app-title">Tasks Manager</h1>
-        <p class="subtitle">Plan your time like a pro</p>
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-[320px]">
+        <h1 class="text-2xl font-bold text-center mb-2 text-green-600">Tasks Manager</h1>
+        <p class="text-center text-gray-500 mb-6">Plan your time like a pro</p>
 
-        <input id="email" placeholder="Email" autofocus>
-        <input id="password" type="password" placeholder="Password">
+        <input id="email" placeholder="Email" class="w-full mb-3 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-400">
+        <input id="password" type="password" placeholder="Password" class="w-full mb-4 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-400">
 
-        <div class="auth-buttons">
-            <button onclick="login()">Login</button>
-            <button onclick="register()" class="secondary">Register</button>
+        <div class="flex gap-2">
+            <button onclick="login()" class="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">
+                Login
+            </button>
+            <button onclick="register()" class="flex-1 bg-green-100 py-2 rounded-lg hover:bg-green-200">
+                Register
+            </button>
         </div>
-
     </div>
 
 </div>
 
-<!-- TASK LIST -->
-<div id="tasks-screen" style="display:none;">
-    <button onclick="showAdd()">+ Add</button>
-    <button onclick="showCalendar()">Calendar</button>
+<!-- TASKS -->
+<div id="tasks-screen" class="hidden max-w-4xl mx-auto mt-8 bg-white p-6 rounded-2xl shadow">
+
+    <div class="flex gap-2 mb-4">
+        <button onclick="showAdd()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+            + Add
+        </button>
+        <button onclick="showCalendar()" class="bg-green-100 px-4 py-2 rounded-lg hover:bg-green-200">
+            Calendar
+        </button>
+    </div>
 
     <div id="tasks"></div>
 </div>
 
 <!-- ADD -->
-<div id="add-screen" style="display:none;">
-    <h3>Add Task</h3>
+<div id="add-screen" class="hidden max-w-xl mx-auto mt-8 bg-white p-6 rounded-2xl shadow">
 
-    <input id="taskTitle" placeholder="Title">
-    <input id="taskDesc" placeholder="Description">
-    <input id="taskDate" type="date">
+    <h2 class="text-lg font-bold mb-4 text-green-600">Add Task</h2>
 
-    <div>
-        Start:
-        <select id="startHour"></select> :
-        <select id="startMinute"></select>
+    <input id="taskTitle" placeholder="Title" class="w-full mb-3 px-3 py-2 border rounded-lg">
+    <input id="taskDesc" placeholder="Description" class="w-full mb-3 px-3 py-2 border rounded-lg">
+    <input id="taskDate" type="date" class="w-full mb-3 px-3 py-2 border rounded-lg">
+
+    <div class="flex gap-2 mb-3">
+        <select id="startHour" class="flex-1 border rounded p-2"></select>
+        <select id="startMinute" class="flex-1 border rounded p-2"></select>
     </div>
 
-    <div>
-        End:
-        <select id="endHour"></select> :
-        <select id="endMinute"></select>
+    <div class="flex gap-2 mb-4">
+        <select id="endHour" class="flex-1 border rounded p-2"></select>
+        <select id="endMinute" class="flex-1 border rounded p-2"></select>
     </div>
 
-    <button onclick="createTask()">Save</button>
+    <button onclick="createTask()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+        Save
+    </button>
 </div>
 
 <!-- EDIT -->
-<div id="task-screen" style="display:none;">
+<div id="task-screen" class="hidden max-w-xl mx-auto mt-8 bg-white p-6 rounded-2xl shadow">
 
-    <div class="edit-header">Edit Task</div>
+    <h2 class="text-lg font-bold mb-4 text-green-600">Edit Task</h2>
 
-    <div class="edit-row">
+    <input id="editTitle" class="w-full mb-3 px-3 py-2 border rounded-lg">
+    <input id="editDesc" class="w-full mb-3 px-3 py-2 border rounded-lg">
+    <input id="editDate" type="date" class="w-full mb-3 px-3 py-2 border rounded-lg">
 
-        <input id="editTitle" placeholder="Title">
-
-        <input id="editDate" type="date">
-
-        <span>Start:</span>
-        <select id="editStartHour"></select> :
-        <select id="editStartMinute"></select>
-
-        <span>End:</span>
-        <select id="editEndHour"></select> :
-        <select id="editEndMinute"></select>
-
-        <button onclick="saveTask()">Save</button>
-        <button onclick="deleteTask()">Delete</button>
-
+    <div class="flex gap-2 mb-3">
+        <select id="editStartHour" class="flex-1 border rounded p-2"></select>
+        <select id="editStartMinute" class="flex-1 border rounded p-2"></select>
     </div>
 
-    <textarea id="editDesc" class="edit-desc" placeholder="Description"></textarea>
+    <div class="flex gap-2 mb-4">
+        <select id="editEndHour" class="flex-1 border rounded p-2"></select>
+        <select id="editEndMinute" class="flex-1 border rounded p-2"></select>
+    </div>
+
+    <div class="flex gap-2">
+        <button onclick="saveTask()" class="bg-green-500 text-white px-4 py-2 rounded">
+            Save
+        </button>
+
+        <button onclick="deleteTask()" class="bg-red-500 text-white px-4 py-2 rounded">
+            Delete
+        </button>
+    </div>
 
 </div>
 
 <!-- CALENDAR -->
-<div id="calendar-screen" style="display:none;">
-    <div id="calendar" style="height:720px;"></div>
+<div id="calendar-screen" class="hidden max-w-6xl mx-auto mt-8 bg-white p-4 rounded-2xl shadow">
+    <div id="calendar"></div>
 </div>
 
 <script>
 
 let token = "";
 let tasks = [];
-let selectedTask = null;
+let calendar;
 
-// -------- TIME --------
+// ===== AUTH =====
 
-function fillTimeSelectors() {
-    const hours = [...Array(24).keys()];
-    const minutes = [...Array(60).keys()];
-
-    function fill(id, arr) {
-        const el = document.getElementById(id);
-        el.innerHTML = "";
-        arr.forEach(v => {
-            const val = String(v).padStart(2,'0');
-            el.innerHTML += `<option value="${val}">${val}</option>`;
-        });
-    }
-
-    ["startHour","endHour","editStartHour","editEndHour"].forEach(i=>fill(i,hours));
-    ["startMinute","endMinute","editStartMinute","editEndMinute"].forEach(i=>fill(i,minutes));
-}
-
-// -------- AUTH --------
-
-async function register() {
-    const emailVal = document.getElementById("email").value;
-    const passwordVal = document.getElementById("password").value;
-
-    const res = await fetch("/register", {
+async function register(){
+    const res = await fetch("/register",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({email:emailVal,password:passwordVal})
+        body:JSON.stringify({email:email.value,password:password.value})
     });
-
     const data = await res.json();
     if(!res.ok) return alert(data.detail);
-
     alert("Registered");
 }
 
-async function login() {
-    const emailVal = document.getElementById("email").value;
-    const passwordVal = document.getElementById("password").value;
-
+async function login(){
     const form = new URLSearchParams();
-    form.append("username", emailVal);
-    form.append("password", passwordVal);
+    form.append("username", email.value);
+    form.append("password", password.value);
 
     const res = await fetch("/login",{method:"POST",body:form});
     const data = await res.json();
@@ -388,119 +155,188 @@ async function login() {
 
     token = data.access_token;
 
-    document.getElementById("auth-screen").style.display = "none";
+    document.getElementById("auth-screen").style.display="none";
+    document.getElementById("topbar").classList.remove("hidden");
 
-    document.querySelector(".topbar").style.display = "flex";
-    document.getElementById("userEmail").innerText = emailVal;
+    document.getElementById("userEmail").innerText=email.value;
 
     showTasks();
 }
 
 function logout(){
-    token = "";
-
-    document.getElementById("auth-screen").style.display = "flex";
-    document.querySelector(".topbar").style.display = "none";
-
-    document.getElementById("tasks-screen").style.display = "none";
+    token="";
+    document.getElementById("auth-screen").style.display="flex";
+    document.getElementById("topbar").classList.add("hidden");
 }
 
-// -------- UI --------
+// ===== NAVIGATION =====
 
 function showBack(v){
-    document.getElementById("backBtn").style.display = v ? "inline" : "none";
+    document.getElementById("backBtn").classList.toggle("hidden", !v);
 }
 
 function showScreen(id){
-    ["tasks-screen","add-screen","task-screen","calendar-screen"].forEach(s=>{
+    ["tasks-screen","add-screen","calendar-screen","task-screen"].forEach(s=>{
         document.getElementById(s).style.display="none";
     });
     document.getElementById(id).style.display="block";
 }
 
 function showTasks(){
-    document.getElementById("auth-screen").style.display = "none";
-
-    document.querySelector(".topbar").style.display = "flex"; // ПОКАЗЫВАЕМ
-
     showBack(false);
     showScreen("tasks-screen");
-    fillTimeSelectors();
     loadTasks();
 }
 
 function showAdd(){
     showBack(true);
     showScreen("add-screen");
+    fillTimeSelectors();
 }
 
-function back(){ showTasks(); }
-
-function showAuth(){
-    document.getElementById("auth-screen").style.display = "flex";
-
-    document.querySelector(".topbar").style.display = "none"; // СКРЫВАЕМ
+function showCalendar(){
+    showBack(true);
+    showScreen("calendar-screen");
+    initCalendar();
 }
 
-// -------- TASKS --------
-
-function getTaskStatus(t){
-    const now=new Date();
-    const s=new Date(t.date+"T"+t.start_time);
-    const e=new Date(t.date+"T"+t.end_time);
-
-    if(now>=s && now<=e) return "active";
-    if(now>e) return "past";
-    return "future";
+function back(){
+    showTasks();
 }
 
-function formatDate(d){
-    const [y,m,day]=d.split("-");
-    return `${day}-${m}-${y}`;
+// ===== TASKS =====
+
+function getTaskStatusClass(t){
+    const now = new Date();
+    const start = new Date(t.date + "T" + t.start_time);
+    const end = new Date(t.date + "T" + t.end_time);
+
+    if(now >= start && now <= end){
+        return "bg-yellow-100 border-yellow-400"; // ongoing
+    }
+    if(now > end){
+        return "bg-gray-100 opacity-60"; // past
+    }
+    return "bg-white hover:bg-green-50"; // future
 }
 
 async function loadTasks(){
-    const res=await fetch("/tasks",{headers:{Authorization:"Bearer "+token}});
-    tasks=await res.json();
+    const res = await fetch("/tasks", {
+        headers: { Authorization: "Bearer " + token }
+    });
 
-    tasks.sort((a,b)=>new Date(a.date+"T"+a.start_time)-new Date(b.date+"T"+b.start_time));
+    tasks = await res.json();
 
-    let currentDate="";
-    const container=document.getElementById("tasks");
-    container.innerHTML="";
+    const container = document.getElementById("tasks");
+    container.innerHTML = "";
 
-    tasks.forEach(t=>{
-        if(t.date!==currentDate){
-            currentDate=t.date;
-            container.innerHTML += `<div class="date-header">${formatDate(t.date)}</div>`;
-        }
+    tasks.forEach(t => {
+        const cls = getTaskStatusClass(t);
 
-        const cls = getTaskStatus(t);
-        container.innerHTML += `<div class="task ${cls}" ondblclick='openTask(${JSON.stringify(t)})'>
-            ${t.start_time} — ${t.title}
+        container.innerHTML += `
+        <div onclick='openTask(${JSON.stringify(t)})'
+             class="p-3 mb-2 border rounded-lg cursor-pointer ${cls} transition">
+
+            <div class="flex justify-between">
+                <span class="font-semibold text-green-700">${t.start_time}</span>
+                <span class="text-sm text-gray-500">${t.date}</span>
+            </div>
+
+            <div class="font-medium">${t.title}</div>
+            <div class="text-sm text-gray-500">${t.description || ""}</div>
+
         </div>`;
     });
 }
 
-// -------- CRUD --------
+// ===== CALENDAR =====
 
-function openTask(t){
-    selectedTask=t;
-    showBack(true);
-    showScreen("task-screen");
+function getEventColor(t){
+    const now = new Date();
+    const start = new Date(t.date + "T" + t.start_time);
+    const end = new Date(t.date + "T" + t.end_time);
 
-    document.getElementById("editTitle").value=t.title;
-    document.getElementById("editDesc").value=t.description;
-    document.getElementById("editDate").value=t.date;
-
-    const [sh,sm]=t.start_time.split(":");
-    const [eh,em]=t.end_time.split(":");
-
-    document.getElementById("editStartHour").value=sh;
-    document.getElementById("editStartMinute").value=sm;
-    document.getElementById("editEndHour").value=eh;
-    document.getElementById("editEndMinute").value=em;
+    if(now >= start && now <= end){
+        return "#f59e0b"; // 🟡 ongoing (amber)
+    }
+    if(now > end){
+        return "#9ca3af"; // ⚪ past (gray)
+    }
+    return "#16a34a"; // 🟢 future (green)
 }
+
+function initCalendar(){
+
+    if(calendar){
+        calendar.destroy();
+    }
+
+    const calendarEl = document.getElementById('calendar');
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        height: 700,
+
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'timeGridDay,timeGridWeek,dayGridMonth'
+        },
+
+        events: tasks.map(t => ({
+            title: t.title,
+            start: t.date + "T" + t.start_time,
+            end: t.date + "T" + t.end_time,
+            backgroundColor: getEventColor(t),
+            borderColor: getEventColor(t),
+            extendedProps: t // 🔥 important
+        })),
+
+        nowIndicator: true,
+        selectable: true,
+
+        // 🔥 CLICK EVENT → EDIT
+        eventClick: function(info){
+            const t = info.event.extendedProps;
+            openTask(t); // your existing function
+        },
+
+        // 🔥 STYLE PAST EVENTS (fade)
+        eventDidMount: function(info){
+            const t = info.event.extendedProps;
+
+            const now = new Date();
+            const end = new Date(t.date + "T" + t.end_time);
+
+            if(now > end){
+                info.el.style.opacity = "0.6";
+            }
+        }
+    });
+
+    calendar.render();
+}
+
+// ===== TIME =====
+
+function fillTimeSelectors(){
+    const hours=[...Array(24).keys()];
+    const minutes=[...Array(60).keys()];
+
+    function fill(id,arr){
+        const el=document.getElementById(id);
+        el.innerHTML="";
+        arr.forEach(v=>{
+            const val=String(v).padStart(2,'0');
+            el.innerHTML+=`<option>${val}</option>`;
+        });
+    }
+
+    ["startHour","endHour","editStartHour","editEndHour"].forEach(i=>fill(i,hours));
+    ["startMinute","endMinute","editStartMinute","editEndMinute"].forEach(i=>fill(i,minutes));
+}
+
+// ===== CRUD =====
 
 async function createTask(){
     const start = startHour.value + ":" + startMinute.value;
@@ -521,7 +357,30 @@ async function createTask(){
         })
     });
 
-    back();
+    showTasks();
+}
+
+let selectedTask = null;
+
+function openTask(t){
+    selectedTask = t;
+
+    showBack(true);
+    showScreen("task-screen");
+
+    document.getElementById("editTitle").value = t.title;
+    document.getElementById("editDesc").value = t.description || "";
+    document.getElementById("editDate").value = t.date;
+
+    fillTimeSelectors();
+
+    const [sh, sm] = t.start_time.split(":");
+    const [eh, em] = t.end_time.split(":");
+
+    document.getElementById("editStartHour").value = sh;
+    document.getElementById("editStartMinute").value = sm;
+    document.getElementById("editEndHour").value = eh;
+    document.getElementById("editEndMinute").value = em;
 }
 
 async function saveTask(){
@@ -543,117 +402,18 @@ async function saveTask(){
         })
     });
 
-    await loadTasks();   // ← ВОТ ЭТО КЛЮЧЕВОЕ
-    back();
+    await loadTasks();
+    showTasks();
 }
 
 async function deleteTask(){
-    await fetch(`/tasks/${selectedTask.id}`,{
-        method:"DELETE",
-        headers:{Authorization:"Bearer "+token}
-    });
-    back();
-}
-
-// -------- CALENDAR --------
-
-function showCalendar(){
-    showBack(true);
-    showScreen("calendar-screen");
-    renderCalendar();
-}
-
-function timeToMinutes(t){
-    const [h,m]=t.split(":").map(Number);
-    return h*60+m;
-}
-
-function renderCalendar() {
-    const container = document.getElementById("calendar");
-    container.innerHTML = "";
-
-    const grouped = {};
-    tasks.forEach(t => {
-        if (!grouped[t.date]) grouped[t.date] = [];
-        grouped[t.date].push(t);
+    await fetch(`/tasks/${selectedTask.id}`, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
     });
 
-    const dates = Object.keys(grouped);
-
-    // ---- layout ----
-    container.style.display = "flex";
-    container.style.height = "720px";
-    container.style.border = "1px solid #ccc";
-    container.style.overflow = "auto";
-
-    // ---- TIME COLUMN ----
-    const timeCol = document.createElement("div");
-    timeCol.style.width = "60px";
-
-    for (let i = 0; i < 24; i++) {
-        const t = document.createElement("div");
-        t.style.height = "60px";
-        t.style.fontSize = "12px";
-        t.style.color = "#666";
-        t.innerText = String(i).padStart(2,'0') + ":00";
-        timeCol.appendChild(t);
-    }
-
-    container.appendChild(timeCol);
-
-    // ---- DAY COLUMNS ----
-    dates.forEach(date => {
-
-        const col = document.createElement("div");
-        col.style.flex = "1";
-        col.style.minWidth = "160px";
-        col.style.borderLeft = "1px solid #ddd";
-        col.style.position = "relative";
-
-        // header
-        const header = document.createElement("div");
-        header.innerText = formatDate(date);
-        header.style.textAlign = "center";
-        header.style.fontWeight = "bold";
-        header.style.height = "20px";
-        col.appendChild(header);
-
-        // background grid
-        for (let i = 0; i < 24; i++) {
-            const line = document.createElement("div");
-            line.style.height = "60px";
-            line.style.borderTop = "1px solid #eee";
-            col.appendChild(line);
-        }
-
-        // tasks
-        grouped[date].forEach(t => {
-
-            const start = timeToMinutes(t.start_time);
-            const end = timeToMinutes(t.end_time);
-
-            const block = document.createElement("div");
-
-            block.style.position = "absolute";
-            block.style.left = "5px";
-            block.style.right = "5px";
-
-            block.style.top = (start) + "px";
-            block.style.height = (end - start) + "px";
-
-            block.style.background = "#4CAF50";
-            block.style.color = "white";
-            block.style.borderRadius = "6px";
-            block.style.padding = "4px";
-            block.style.fontSize = "12px";
-
-            block.innerText = t.title;
-
-            col.appendChild(block);
-        });
-
-        container.appendChild(col);
-    });
+    await loadTasks();
+    showTasks();
 }
 
 </script>
