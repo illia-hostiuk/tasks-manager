@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import sqlite3
+from db import get_db_connection, init_db
 import jwt
 from passlib.context import CryptContext
 
@@ -19,38 +20,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # ------------------- DB -------------------
 
 def get_db():
-    conn = sqlite3.connect("tasks.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def init_db():
-    conn = sqlite3.connect("tasks.db")
-
-    conn.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE,
-        password TEXT
-    )
-    """)
-
-    conn.execute("""
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        description TEXT,
-        date TEXT,
-        start_time TEXT,
-        end_time TEXT,
-        completed INTEGER DEFAULT 0,
-        user_email TEXT
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
+    db = get_db_connection()
+    try:
+        yield db
+    finally:
+        db.close()
 
 init_db()
 

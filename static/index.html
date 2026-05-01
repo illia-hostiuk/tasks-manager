@@ -146,6 +146,90 @@
 	    background: #eee;
 	    color: black;
 	}
+	/* фон */
+	body {
+	    font-family: Arial, sans-serif;
+	    background: linear-gradient(135deg, #4CAF50, #81C784);
+	    margin: 0;
+	}
+
+	/* основной контейнер */
+	#tasks-screen {
+	    max-width: 800px;
+	    margin: 40px auto;
+	    background: white;
+	    padding: 25px;
+	    border-radius: 16px;
+	    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+	}
+
+	/* заголовок */
+	h1 {
+	    text-align: center;
+	    margin-bottom: 25px;
+	}
+
+	/* кнопки */
+	button {
+	    border: none;
+	    border-radius: 8px;
+	    padding: 8px 14px;
+	    cursor: pointer;
+	}
+
+	/* Add — главная */
+	button:first-of-type {
+	    background: #4CAF50;
+	    color: white;
+	    font-weight: bold;
+	}
+
+	/* остальные */
+	button:nth-of-type(2),
+	button:nth-of-type(3) {
+	    background: #eee;
+	}
+
+	/* блок кнопок */
+	#tasks-screen > button {
+	    margin-right: 8px;
+	}
+
+        #tasks-screen {
+   	    overflow: hidden;
+	}
+
+	/* даты */
+	.date-header {
+	    margin-top: 20px;
+	    font-weight: bold;
+	    color: #555;
+	}
+
+	/* карточка задачи */
+	.task {
+	    background: #fff;
+	    border-radius: 10px;
+	    padding: 12px;
+	    margin: 6px 0;
+	    border: 1px solid #ddd;
+	    transition: 0.2s;
+	}
+
+	.task:hover {
+	    transform: scale(1.01);
+	}
+
+	/* активные */
+	.active {
+	    background: #4CAF50;
+	    color: white;
+	}
+
+	/* прошедшие */
+	.past {
+	    background: #e8f5e9;
+	}
     </style>
 </head>
 <body>
@@ -184,7 +268,7 @@
 
 <!-- TASK LIST -->
 <div id="tasks-screen" style="display:none;">
-    <button onclick="showAdd()">Add</button>
+    <button onclick="showAdd()">+ Add</button>
     <button onclick="showCalendar()">Calendar</button>
 
     <div id="tasks"></div>
@@ -444,21 +528,22 @@ async function saveTask(){
     const start = editStartHour.value + ":" + editStartMinute.value;
     const end = editEndHour.value + ":" + editEndMinute.value;
 
-    await fetch(`/tasks/${selectedTask.id}`,{
-        method:"PUT",
-        headers:{
-            Authorization:"Bearer "+token,
-            "Content-Type":"application/json"
+    await fetch(`/tasks/${selectedTask.id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            title:editTitle.value,
-            description:editDesc.value,
-            date:editDate.value,
-            start_time:start,
-            end_time:end
+        body: JSON.stringify({
+            title: editTitle.value,
+            description: editDesc.value,
+            date: editDate.value,
+            start_time: start,
+            end_time: end
         })
     });
 
+    await loadTasks();   // ← ВОТ ЭТО КЛЮЧЕВОЕ
     back();
 }
 
